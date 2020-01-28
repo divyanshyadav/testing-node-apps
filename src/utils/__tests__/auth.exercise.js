@@ -1,21 +1,44 @@
 // Testing Pure Functions
 
-// 💣 remove this todo test (it's only here so you don't get an error about missing tests)
-test.todo('remove me')
+import {isPasswordAllowed} from '../auth'
 
-// 🐨 import the function that we're testing
-// 💰 import {isPasswordAllowed} from '../auth'
+describe('isPasswordAllowed', () => {
+    const invalidPasswords = [
+        { value: 'a2c!', message: 'too short'},
+        { value: '123456!', message: 'no alphabet characters'},
+        { value: 'ABCdef!', message: 'no numbers'},
+        { value: 'abc123!', message: 'no uppercase letters'},
+        { value: 'ABC123!', message: 'no lowercase letters'},
+        { value: 'ABCdef123', message: 'no non-alphanumeric characters'},
+    ]
 
-// 🐨 write tests for valid and invalid passwords
-// 💰 here are some you can use:
-//
-// valid:
-// - !aBc123
-//
-// invalid:
-// - a2c! // too short
-// - 123456! // no alphabet characters
-// - ABCdef! // no numbers
-// - abc123! // no uppercase letters
-// - ABC123! // no lowercase letters
-// - ABCdef123 // no non-alphanumeric characters
+    const validPasswords = [
+        '!aBc123'
+    ]
+    
+    invalidPasswords.forEach(passwordDetails => {
+        const testTitle = [
+            'disallows', 
+            passwordDetails.value, 
+            passwordDetails.message
+        ]
+
+        test(`${testTitle.join(' | ')}`, () => {
+            expect(isPasswordAllowed(passwordDetails.value)).toBe(false)
+        })
+    })
+
+    validPasswords.forEach(password => {
+        const testTitle = [
+            'allows', 
+            password,
+            'valid'
+        ]
+
+        test(`${testTitle.join(' | ')}`, () => {
+            expect(isPasswordAllowed(password)).toBe(true)
+        })
+    })
+})
+
+
