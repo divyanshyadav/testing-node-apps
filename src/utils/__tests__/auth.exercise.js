@@ -1,44 +1,33 @@
 // Testing Pure Functions
 
+import cases from 'jest-in-case'
 import {isPasswordAllowed} from '../auth'
 
-describe('isPasswordAllowed', () => {
-    const invalidPasswords = [
-        { value: 'a2c!', message: 'too short'},
-        { value: '123456!', message: 'no alphabet characters'},
-        { value: 'ABCdef!', message: 'no numbers'},
-        { value: 'abc123!', message: 'no uppercase letters'},
-        { value: 'ABC123!', message: 'no lowercase letters'},
-        { value: 'ABCdef123', message: 'no non-alphanumeric characters'},
-    ]
+const casify = (obj) => Object.entries(obj)
+    .map(([title, password]) => ({
+        name: `${password} - ${title}`,
+        password
+    }))
 
-    const validPasswords = [
-        '!aBc123'
-    ]
-    
-    invalidPasswords.forEach(passwordDetails => {
-        const testTitle = [
-            'disallows', 
-            passwordDetails.value, 
-            passwordDetails.message
-        ]
-
-        test(`${testTitle.join(' | ')}`, () => {
-            expect(isPasswordAllowed(passwordDetails.value)).toBe(false)
-        })
+cases('isPasswordAllowed: valid passwords', 
+    ({ password }) => {
+        expect(isPasswordAllowed(password)).toBe(true)
+    }, 
+    casify({
+        'valid Password': '!aBc123'
     })
+)
 
-    validPasswords.forEach(password => {
-        const testTitle = [
-            'allows', 
-            password,
-            'valid'
-        ]
-
-        test(`${testTitle.join(' | ')}`, () => {
-            expect(isPasswordAllowed(password)).toBe(true)
-        })
+cases('isPasswordAllowed: invalid passwords', 
+    ({ password }) => {
+        expect(isPasswordAllowed(password)).toBe(false)
+    }, 
+    casify({
+        'too short':  'a2c!',
+        'no alphabet characters':  '123456!',
+        'no number': 'ABCdef!',
+        'no uppercase letters': 'abc123!',
+        'no lowercase letters': 'ABC123!',
+        'no non-alphanumeric characters': 'ABCdef123'
     })
-})
-
-
+)
